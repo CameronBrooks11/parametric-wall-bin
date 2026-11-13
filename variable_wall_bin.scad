@@ -14,6 +14,10 @@ mounting_flange = 25;
 text_string = "Safety Glasses";
 text_font = "Arial:style=Bold";
 text_extrude = 2;
+// the widest the label can be; a wider one is scaled down to fit, keeping its
+// proportions. 0 turns this off. Needs textmetrics(): OpenSCAD 2021.01 warns
+// and leaves the label at full size.
+label_max_width = box_length - 20;
 
 center_screw = true;
 
@@ -150,8 +154,13 @@ difference()
 
     //  text
     text_size = mounting_flange / 2;
+    label_metrics = textmetrics(text_string, size = text_size, font = text_font, halign = "center", valign = "center");
+    label_width = is_undef(label_metrics) ? undef : label_metrics.size[0];
+    label_scale = (label_max_width > 0 && is_num(label_width) && label_width > label_max_width)
+                      ? label_max_width / label_width
+                      : 1;
     translate([ box_length / 2, box_width - wall_thickness + text_extrude, box_height + text_size / 2 ])
-        rotate([ 90, 0, 0 ]) color("red") linear_extrude(height = text_extrude + zFite)
+        rotate([ 90, 0, 0 ]) color("red") linear_extrude(height = text_extrude + zFite) scale([ label_scale, label_scale ])
             text(text_string, size = text_size, font = text_font, halign = "center", valign = "center", $fn = 40);
 }
 
