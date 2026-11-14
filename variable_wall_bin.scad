@@ -1,25 +1,39 @@
-// higher resolution
+/* [Bin] */
+// Outside length, along the wall (mm)
+box_length = 200; // [40:5:400]
+// Outside depth, out from the wall (mm)
+box_width = 70; // [20:5:200]
+// Outside height, without the flange (mm)
+box_height = 100; // [20:5:300]
+// Walls and floor (mm)
+wall_thickness = 3; // [1.2:0.2:6]
+// Radius of the bin's vertical corners (mm)
+corner_radius = 3; // [1:0.5:20]
+
+/* [Mounting] */
+// How far the back wall rises above the bin, for the screws and label (mm)
+mounting_flange = 25; // [10:1:60]
+// Screw size; the holes are 0.5 mm larger (mm)
+screw_diameter = 4; // [2:0.5:8]
+// A third screw hole in the middle
+center_screw = true;
+
+/* [Label] */
+// Text engraved on the flange
+text_string = "Safety Glasses";
+// Font, as fontconfig names it
+text_font = "Arial:style=Bold";
+// Engraving depth into the back wall (mm)
+text_extrude = 2; // [0.4:0.2:3]
+
+/* [Hidden] */
 $fa = 1;
 $fs = 0.4;
 
-// variables
-corner_radius = 3;
-box_length = 200;
-box_width = 70;
-box_height = 100;
-wall_thickness = 3;
-screw_diameter = 4;
-mounting_flange = 25;
-
-text_string = "Safety Glasses";
-text_font = "Arial:style=Bold";
-text_extrude = 2;
 // the widest the label can be; a wider one is scaled down to fit, keeping its
 // proportions. 0 turns this off. Needs textmetrics(): OpenSCAD 2021.01 warns
 // and leaves the label at full size.
 label_max_width = box_length - 20;
-
-center_screw = true;
 
 zFite = $preview ? 0.1 : 0;
 
