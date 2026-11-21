@@ -1,1 +1,3 @@
+title: parametric-wall-bin
+description: A parametric open bin that screws to a wall, with an engraved label, in OpenSCAD
 models: variable_wall_bin.scad

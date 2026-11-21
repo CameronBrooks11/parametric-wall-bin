@@ -8,7 +8,8 @@ flange, made in OpenSCAD.
 ## Use it
 
 Open `variable_wall_bin.scad` in [OpenSCAD](https://openscad.org), edit the
-variables at the top, render, and export an STL.
+variables at the top, render, and export an STL. Or `include` it in another file
+and set the variables after it, as `examples/pen_bin.scad` does.
 
 | Variable | Default | Description |
 | --- | --- | --- |
@@ -39,11 +40,13 @@ nozzle: PLA at 210 °C, bed 60 °C, 0.35 mm layers (0.2 mm first layer),
 
 ## Checks
 
-`just test` takes about 1 s on OpenSCAD 2026.10.15. It renders the bin at the
+`just test` takes a few seconds. It renders the bin at the
 defaults, with a 285 mm label, fitted and unfitted, on a 300 mm bin, and at
-120 × 50 × 60. For each it checks that the bin is one piece of the right size,
-and measures the engraved label's width with `tests/label_probe.scad`.
-`just images` renders the picture above.
+120 × 50 × 60, and the example. For each it checks that the bin is one piece of
+the right size, with no error or warning, and measures the engraved label's
+width with `tests/label_probe.scad`. `just check` checks the `.scad` files are
+formatted with [topiary](https://github.com/tweag/topiary) 0.8.0; `just fmt`
+formats them. `just images` renders the picture above.
 
 ## Licence
 

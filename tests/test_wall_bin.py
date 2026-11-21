@@ -21,6 +21,7 @@ import tempfile
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BIN = os.path.join(ROOT, "variable_wall_bin.scad")
 PROBE = os.path.join(ROOT, "tests", "label_probe.scad")
+EXAMPLE = os.path.join(ROOT, "examples", "pen_bin.scad")
 LONG = "Soldering Supplies and Spare Tips"  # 285 mm at the default size
 
 
@@ -83,18 +84,16 @@ def main():
     with tempfile.TemporaryDirectory() as tmp:
         bin_stl = os.path.join(tmp, "bin.stl")
         label_stl = os.path.join(tmp, "label.stl")
-        for label, defines, want_bin, want_label in CASES:
-            probe = {"BIN": f'"{bin_stl}"'}
-            for name in ("box_length", "box_width", "box_height"):
-                if name in defines:
-                    probe[name] = defines[name]
+
+        def check(label, scad, defines, sizes, want_bin, want_label):
+            probe = {"BIN": f'"{bin_stl}"', **sizes}
             try:
-                solids, size = run(openscad, BIN, bin_stl, defines)
+                solids, size = run(openscad, scad, bin_stl, defines)
                 _, label_size = run(openscad, PROBE, label_stl, probe)
             except RuntimeError as error:
                 failures.append(label)
                 print(f"FAIL {label}: {error}")
-                continue
+                return
             ok = (solids == 1 and all(abs(a - b) <= 0.01 for a, b in zip(size, want_bin))
                   and abs(label_size[0] - want_label) <= 0.01)
             got = (f"bin {solids} solids, {' x '.join(f'{s:.2f}' for s in size)} mm; "
@@ -103,6 +102,13 @@ def main():
                 failures.append(label)
                 got += f"; expected 1 solid, {' x '.join(f'{s:.2f}' for s in want_bin)} mm, label {want_label:.2f}"
             print(f"{'ok  ' if ok else 'FAIL'} {label}: {got}")
+
+        for label, defines, want_bin, want_label in CASES:
+            sizes = {k: v for k, v in defines.items() if k in ("box_length", "box_width", "box_height")}
+            check(label, BIN, defines, sizes, want_bin, want_label)
+        # The example sets its own size, so only the probe is told it.
+        check("examples/pen_bin.scad", EXAMPLE, {}, {"box_length": 120, "box_width": 50, "box_height": 60},
+              (120, 50, 85), 39.62)
     print("all checks passed" if not failures else f"{len(failures)} failed")
     sys.exit(1 if failures else 0)
 
